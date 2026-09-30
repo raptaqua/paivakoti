@@ -30,7 +30,7 @@ function requireLogin(): array {
         exit;
     }
     // Force a password change before anything else (default admin password etc.)
-    if (!empty($user['must_change']) && !in_array(basename($_SERVER['SCRIPT_NAME']), ['profile.php', 'logout.php'], true)) {
+    if (!empty($user['must_change']) && !in_array(basename($_SERVER['SCRIPT_NAME']), ['profile.php', 'logout.php', 'help.php'], true)) {
         $prefix = basename(dirname($_SERVER['SCRIPT_NAME'])) === 'admin' ? '../' : '';
         header('Location: ' . $prefix . 'profile.php?force=1');
         exit;

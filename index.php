@@ -56,6 +56,7 @@ body{display:flex;align-items:center;justify-content:center;min-height:100vh;pad
 
   <?php installButton(true); ?>
 
+  <a href="help.php" class="forgot-link" style="display:block;margin-bottom:8px">❓ Ohje</a>
   <a href="reset_request.php" class="forgot-link">🔑 Unohditko salasanan?</a>
 </div>
 

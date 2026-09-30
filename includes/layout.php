@@ -244,6 +244,7 @@ function topbar(array $user, string $active = ''): void {
     <?php endif; ?>
     <a href="<?= $base ?>/profile.php" class="topbar-btn <?= $active==='profile'?'active':'' ?>">⚙️</a>
     </span>
+    <a href="<?= $base ?>/help.php" class="topbar-btn <?= $active==='help'?'active':'' ?>" aria-label="Ohje">❓</a>
     <?php installButton(); ?>
     <a href="<?= $base ?>/logout.php" class="topbar-btn" aria-label="Kirjaudu ulos">🚪</a>
   </div>

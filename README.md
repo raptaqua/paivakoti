@@ -39,6 +39,7 @@ paivakoti/
 ├── index.php              # Kirjautumissivu
 ├── dashboard.php          # Ryhmänäkymä + suhdelaskuri
 ├── profile.php            # Oman salasanan vaihto
+├── help.php               # Käyttöohje
 ├── logout.php
 ├── reset_request.php      # Salasanan nollaus (pyyntö)
 ├── reset_password.php     # Salasanan nollaus (uusi salasana)
