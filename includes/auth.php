@@ -29,6 +29,12 @@ function requireLogin(): array {
         header('Location: index.php');
         exit;
     }
+    // Force a password change before anything else (default admin password etc.)
+    if (!empty($user['must_change']) && !in_array(basename($_SERVER['SCRIPT_NAME']), ['profile.php', 'logout.php'], true)) {
+        $prefix = basename(dirname($_SERVER['SCRIPT_NAME'])) === 'admin' ? '../' : '';
+        header('Location: ' . $prefix . 'profile.php?force=1');
+        exit;
+    }
     return $user;
 }
 
@@ -53,6 +59,8 @@ function login(string $username, string $password): bool {
     $user = $stmt->fetch();
 
     if ($user && password_verify($password, $user['password_hash'])) {
+        // Still using the documented default password → must change it
+        $mustChange = !empty($user['must_change_password']) || password_verify('admin1234', $user['password_hash']);
         startSession();
         session_regenerate_id(true);
         $_SESSION['user'] = [
@@ -60,6 +68,7 @@ function login(string $username, string $password): bool {
             'username'  => $user['username'],
             'full_name' => $user['full_name'],
             'role'      => $user['role'],
+            'must_change' => $mustChange,
         ];
         return true;
     }
@@ -95,13 +104,13 @@ function resetPasswordWithToken(string $token, string $newPassword): bool {
     if (!$user) return false;
 
     $hash = password_hash($newPassword, PASSWORD_DEFAULT);
-    $db->prepare("UPDATE users SET password_hash=?, reset_token=NULL, reset_expires=NULL WHERE id=?")
+    $db->prepare("UPDATE users SET password_hash=?, must_change_password=0, reset_token=NULL, reset_expires=NULL WHERE id=?")
        ->execute([$hash, $user['id']]);
     return true;
 }
 
 function changePassword(int $userId, string $newPassword): void {
     $hash = password_hash($newPassword, PASSWORD_DEFAULT);
-    getDB()->prepare("UPDATE users SET password_hash=? WHERE id=?")
+    getDB()->prepare("UPDATE users SET password_hash=?, must_change_password=0 WHERE id=?")
            ->execute([$hash, $userId]);
 }

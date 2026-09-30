@@ -30,7 +30,7 @@ php -S localhost:8080
 |----------------|------------|-------|
 | `admin`        | `admin1234`| Admin |
 
-**Vaihda oletussalasana heti kirjautumisen jälkeen!**
+**Ensimmäisellä kirjautumisella sovellus pakottaa vaihtamaan oletussalasanan** ennen kuin muuta voi käyttää.
 
 ## Tiedostorakenne
 

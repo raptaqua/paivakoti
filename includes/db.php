@@ -33,7 +33,8 @@ function initSchema(PDO $pdo): void {
             reset_token TEXT,
             reset_expires INTEGER,
             created_at INTEGER DEFAULT (strftime('%s','now')),
-            active INTEGER DEFAULT 1
+            active INTEGER DEFAULT 1,
+            must_change_password INTEGER DEFAULT 0
         );
 
         CREATE TABLE IF NOT EXISTS groups_table (
@@ -59,11 +60,17 @@ function initSchema(PDO $pdo): void {
         );
     ");
 
+    // Migrate older databases that lack the must_change_password column
+    $cols = array_column($pdo->query("PRAGMA table_info(users)")->fetchAll(), 'name');
+    if (!in_array('must_change_password', $cols, true)) {
+        $pdo->exec("ALTER TABLE users ADD COLUMN must_change_password INTEGER DEFAULT 0");
+    }
+
     // Seed default admin if no users exist
     $count = $pdo->query("SELECT COUNT(*) FROM users")->fetchColumn();
     if ($count == 0) {
         $hash = password_hash('admin1234', PASSWORD_DEFAULT);
-        $pdo->prepare("INSERT INTO users (username, password_hash, full_name, role) VALUES (?,?,?,?)")
+        $pdo->prepare("INSERT INTO users (username, password_hash, full_name, role, must_change_password) VALUES (?,?,?,?,1)")
             ->execute(['admin', $hash, 'Pääkäyttäjä', 'admin']);
     }
 

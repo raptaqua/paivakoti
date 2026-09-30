@@ -24,8 +24,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $err = 'Uuden salasanan on oltava vähintään 6 merkkiä.';
     } elseif ($newPass !== $newPass2) {
         $err = 'Uudet salasanat eivät täsmää.';
+    } elseif ($newPass === 'admin1234') {
+        $err = 'Valitse jokin muu kuin oletussalasana.';
     } else {
         changePassword($user['id'], $newPass);
+        if (!empty($user['must_change'])) {
+            $_SESSION['user']['must_change'] = false;
+            header('Location: dashboard.php');
+            exit;
+        }
         $ok = 'Salasana vaihdettu onnistuneesti!';
     }
 }
@@ -50,6 +57,7 @@ htmlHead('Profiili');
   <div class="card">
     <div class="card-title">🔑 Vaihda salasana</div>
 
+    <?php if (!empty($user['must_change'])): ?><div class="alert alert-info">Vaihda oletussalasana ennen kuin jatkat.</div><?php endif; ?>
     <?php if ($err): ?><div class="alert alert-error"><?= htmlspecialchars($err) ?></div><?php endif; ?>
     <?php if ($ok):  ?><div class="alert alert-success"><?= htmlspecialchars($ok) ?></div><?php endif; ?>
 
