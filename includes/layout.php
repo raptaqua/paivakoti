@@ -92,7 +92,10 @@ body::after{content:'';position:fixed;bottom:-100px;left:-100px;width:350px;heig
 .topbar-btn{background:rgba(255,255,255,.15);border:none;color:white;padding:8px 13px;border-radius:8px;font-family:'Quicksand',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:background .2s;text-decoration:none;display:inline-flex;align-items:center;gap:5px}
 .topbar-btn:hover{background:rgba(255,255,255,.28)}
 .topbar-btn.active{background:rgba(255,255,255,.3);outline:2px solid rgba(255,255,255,.4)}
-.topbar-user{font-size:12px;opacity:.75;margin-right:4px}
+.topbar-user{display:inline-flex;align-items:center;gap:8px;background:white;color:var(--forest-dark);padding:4px 12px 4px 5px;border-radius:999px;font-size:13px;font-weight:800;margin-left:4px;margin-right:2px;max-width:200px;box-shadow:0 1px 4px rgba(0,0,0,.2)}
+.topbar-user .avatar{width:28px;height:28px;border-radius:50%;background:var(--forest);color:white;display:flex;align-items:center;justify-content:center;font-family:'Nunito',sans-serif;font-weight:900;font-size:14px;flex-shrink:0}
+.topbar-user .uname{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.topbar-logo .logo-user{display:none}
 
 /* MAIN CONTENT */
 .page{max-width:820px;margin:0 auto;padding:22px 18px;position:relative;z-index:1}
@@ -202,6 +205,16 @@ tr:hover td{background:#f9fdf9}
 @media(max-width:700px){
   .topbar{padding:0 14px;padding-top:env(safe-area-inset-top);height:calc(58px + env(safe-area-inset-top))}
   .topbar-nav,.topbar-user{display:none}
+  .topbar-logo{min-width:0;flex:1}
+  .topbar-logo .logo-stack{display:flex;flex-direction:column;line-height:1.15;min-width:0}
+  .topbar-logo .logo-user{display:block;font-size:12px;font-weight:700;opacity:.85;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .topbar-actions{flex-wrap:nowrap;flex-shrink:0}
+  .group-head-form{flex-wrap:nowrap!important;gap:6px!important}
+  .group-head-form input[name=name]{flex:1 1 0;min-width:0;width:100%!important}
+  .group-head-form select{padding:8px 4px!important}
+  .group-head-btns{margin-left:0!important}
+  .group-head-btns .btn .btn-txt{display:none}
+  .group-head-btns .btn{min-width:44px;justify-content:center;padding:8px 10px;font-size:16px}
   .install-btn:not(.block) .inst-txt{display:none}
   .topbar-btn,.install-btn{min-height:42px;min-width:42px;justify-content:center;font-size:15px}
   body.has-nav{padding-bottom:calc(72px + env(safe-area-inset-bottom))}
@@ -214,7 +227,6 @@ tr:hover td{background:#f9fdf9}
   .card{padding:18px}
 }
 @media(max-width:480px){
-  .topbar-logo span.logo-text{display:none}
   .summary-number{font-size:24px}
   .form-row{flex-direction:column}
 }
@@ -233,9 +245,8 @@ function topbar(array $user, string $active = ''): void {
     $base      = str_replace($docRoot, '', $appRoot); // e.g. "/paivakoti" or ""
 ?>
 <div class="topbar">
-  <a href="<?= $base ?>/dashboard.php" class="topbar-logo">🌳 <span class="logo-text">Päiväkoti</span></a>
+  <a href="<?= $base ?>/dashboard.php" class="topbar-logo">🌳 <span class="logo-stack"><span class="logo-text">Päiväkoti</span><span class="logo-user"><?= htmlspecialchars($user['full_name']) ?></span></span></a>
   <div class="topbar-actions">
-    <span class="topbar-user">👤 <?= htmlspecialchars($user['full_name']) ?></span>
     <span class="topbar-nav">
     <a href="<?= $base ?>/dashboard.php" class="topbar-btn <?= $active==='dashboard'?'active':'' ?>">📊 Ryhmät</a>
     <?php if ($user['role']==='admin'): ?>
@@ -247,6 +258,7 @@ function topbar(array $user, string $active = ''): void {
     </span>
     <a href="<?= $base ?>/help.php" class="topbar-btn <?= $active==='help'?'active':'' ?>" aria-label="Ohje">❓</a>
     <?php installButton(); ?>
+    <span class="topbar-user" title="Kirjautunut: <?= htmlspecialchars($user['username']) ?>"><span class="avatar"><?= htmlspecialchars(mb_strtoupper(mb_substr($user['full_name'],0,1))) ?></span><span class="uname"><?= htmlspecialchars($user['full_name']) ?></span></span>
     <a href="<?= $base ?>/logout.php" class="topbar-btn" aria-label="Kirjaudu ulos">🚪</a>
   </div>
 </div>
