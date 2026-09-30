@@ -60,6 +60,21 @@ function initSchema(PDO $pdo): void {
         );
     ");
 
+    $pdo->exec("
+        CREATE TABLE IF NOT EXISTS age_groups (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            label TEXT NOT NULL,
+            min_age INTEGER NOT NULL,
+            max_age INTEGER,            -- NULL = no upper limit
+            factor REAL NOT NULL
+        );
+    ");
+    if ($pdo->query("SELECT COUNT(*) FROM age_groups")->fetchColumn() == 0) {
+        $pdo->exec("INSERT INTO age_groups (label, min_age, max_age, factor) VALUES
+            ('Alle 3-vuotiaat', 0, 2, 1.75),
+            ('3-vuotiaat ja vanhemmat', 3, NULL, 1.0)");
+    }
+
     // Migrate older databases that lack the must_change_password column
     $cols = array_column($pdo->query("PRAGMA table_info(users)")->fetchAll(), 'name');
     if (!in_array('must_change_password', $cols, true)) {
@@ -106,4 +121,25 @@ function initSchema(PDO $pdo): void {
         $stmt = $pdo->prepare("INSERT INTO children (group_id, name, age) VALUES (?,?,?)");
         foreach ($children as $c) $stmt->execute($c);
     }
+}
+
+/** All age groups, youngest first. */
+function getAgeGroups(): array {
+    return getDB()->query("SELECT * FROM age_groups ORDER BY min_age")->fetchAll();
+}
+
+/** Multiplier for a child's age; ages outside every age group count as 1.0. */
+function ageFactor(int $age, array $ageGroups): float {
+    foreach ($ageGroups as $g) {
+        if ($age >= $g['min_age'] && ($g['max_age'] === null || $age <= $g['max_age'])) {
+            return (float)$g['factor'];
+        }
+    }
+    return 1.0;
+}
+
+/** Format a factor for display, e.g. 1.75 / 1.0 */
+function formatFactor(float $f): string {
+    $s = number_format($f, 2, '.', '');
+    return substr($s, -1) === '0' ? substr($s, 0, -1) : $s;
 }

@@ -82,6 +82,7 @@ foreach ($groups as $g) {
     $stmt->execute([$g['id']]);
     $groupsWithChildren[] = ['group' => $g, 'children' => $stmt->fetchAll()];
 }
+$ageGroups = getAgeGroups();
 $allGroups = $groups; // for move-child dropdown
 
 $emojis = ['🐦','🐦‍⬛','🐤','🦉','🦜','🦚','🦅','🦋','🌸','🌟','🍀','🌈','🐸','🐝','🦊','🐯'];
@@ -170,7 +171,7 @@ htmlHead('Ryhmien hallinta');
         <td>
           <input form="edit_child_<?= $c['id'] ?>" type="number" name="age" value="<?= $c['age'] ?>" min="0" max="7" class="admin-inline-input" style="width:60px">
         </td>
-        <td style="font-weight:700;color:var(--forest)"><?= $c['age'] < 3 ? '1.75' : '1.0' ?></td>
+        <td style="font-weight:700;color:var(--forest)"><?= formatFactor(ageFactor((int)$c['age'], $ageGroups)) ?></td>
         <td>
           <select form="edit_child_<?= $c['id'] ?>" name="group_id" class="admin-inline-input" style="width:120px">
             <?php foreach ($allGroups as $ag): ?>

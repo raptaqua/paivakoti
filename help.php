@@ -47,12 +47,12 @@ htmlHead('Ohje');
     <h2>📊 Suhdeluku ja aikuisten tarve</h2>
     <p>Etusivulla (Ryhmät) näkyy jokaisen ryhmän tilanne. Ylhäällä on koko päiväkodin yhteenveto: lapsia paikalla, yhteissuhde ja aikuisten tarve.</p>
     <ul>
-      <li><strong>Alle 3-vuotias</strong> lasketaan kertoimella <strong>1,75</strong>.</li>
-      <li><strong>3 vuotta täyttänyt</strong> lasketaan kertoimella <strong>1,0</strong>.</li>
+      <li>Kerroin määräytyy lapsen iän mukaan. Oletuksena <strong>alle 3-vuotiaat 1,75</strong> ja <strong>3-vuotiaat ja vanhemmat 1,0</strong>.</li>
+      <li>Kertoimet ja ikäluokat ovat pääkäyttäjän muokattavissa (Kertoimet-sivu). Ikäluokkiin kuulumaton ikä lasketaan kertoimella 1,0.</li>
       <li>Vain paikalla olevat lapset lasketaan mukaan.</li>
       <li>Tarvittavien aikuisten määrä = yhteissuhde ÷ 7, pyöristettynä ylöspäin.</li>
     </ul>
-    <p>Esimerkki: 4 alle 3-vuotiasta (4 × 1,75 = 7) ja 3 isompaa (3 × 1,0 = 3) → suhde 10 → 10 ÷ 7 → <strong>2 aikuista</strong>.</p>
+    <p>Esimerkki oletuskertoimilla: 4 alle 3-vuotiasta (4 × 1,75 = 7) ja 3 isompaa (3 × 1,0 = 3) → suhde 10 → 10 ÷ 7 → <strong>2 aikuista</strong>.</p>
     <p style="margin-top:8px">Avaa ryhmä napauttamalla sen otsikkoa, niin näet lapset.</p>
   </div>
 
@@ -97,8 +97,14 @@ htmlHead('Ohje');
     <p><strong>Ryhmät ja lapset</strong> (Hallinta)</p>
     <ul>
       <li>Lisää, muokkaa ja poista ryhmiä. Ryhmälle valitaan nimi ja emoji.</li>
-      <li>Lisää lapsia ryhmään nimellä ja iällä. Ikä määrää kertoimen (alle 3 v → 1,75).</li>
+      <li>Lisää lapsia ryhmään nimellä ja iällä. Ikä määrää kertoimen ikäluokkien mukaan.</li>
       <li>Ryhmän tai lapsen poisto on pysyvä. Ryhmän poisto poistaa myös sen lapset.</li>
+    </ul>
+    <p style="margin-top:10px"><strong>Kertoimet</strong></p>
+    <ul>
+      <li>Kertoimet-sivulla voit muokata, lisätä ja poistaa ikäluokkia: ikäväli (iästä–ikään) ja kerroin, esim. 1–2 v → 1,5.</li>
+      <li>Jätä “Ikään” tyhjäksi, jos ikäluokalla ei ole ylärajaa. Ikävälit eivät saa mennä päällekkäin.</li>
+      <li>Muutos vaikuttaa heti kaikkiin laskelmiin.</li>
     </ul>
     <p style="margin-top:10px"><strong>Käyttäjät</strong></p>
     <ul>

@@ -6,6 +6,7 @@ $user = requireLogin();
 $db   = getDB();
 
 $today = date('Y-m-d');
+$ageGroups = getAgeGroups();
 
 // Handle absence toggle (POST)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
@@ -59,7 +60,7 @@ foreach ($groups as $g) {
         $isAbsent = $c['long_absent'] || $c['today_absent'];
         if (!$isAbsent) {
             $present++;
-            $ratioSum += $c['age'] < 3 ? 1.75 : 1.0;
+            $ratioSum += ageFactor((int)$c['age'], $ageGroups);
         }
     }
     $adults = $ratioSum > 0 ? ceil($ratioSum / 7) : 0;
@@ -150,14 +151,15 @@ htmlHead('Ryhmät');
         </div>
       <?php else: foreach ($gd['children'] as $c):
         $isAbsent = $c['long_absent'] || $c['today_absent'];
-        $isYoung  = $c['age'] < 3;
+        $factor   = ageFactor((int)$c['age'], $ageGroups);
+        $isYoung  = $factor > 1.0;
       ?>
       <div class="child-row">
         <div class="child-avatar <?= $isAbsent ? 'absent' : '' ?>"><?= mb_substr($c['name'],0,1) ?></div>
         <div style="flex:1;min-width:0">
           <div class="child-name <?= $isAbsent ? 'absent' : '' ?>"><?= htmlspecialchars($c['name']) ?></div>
           <div class="child-meta">
-            <span class="age-badge <?= $isYoung ? 'young' : '' ?>"><?= $c['age'] ?>v · <?= $isYoung ? '1.75' : '1.0' ?></span>
+            <span class="age-badge <?= $isYoung ? 'young' : '' ?>"><?= $c['age'] ?>v · <?= formatFactor($factor) ?></span>
             <?php if ($c['long_absent']): ?><span class="absence-lbl">Poissa toistaiseksi</span><?php endif; ?>
           </div>
         </div>

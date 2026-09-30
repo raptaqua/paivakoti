@@ -49,6 +49,7 @@ paivakoti/
 │   └── layout.php         # Yhteinen HTML-pohja
 ├── admin/
 │   ├── groups.php         # Ryhmien ja lasten hallinta (admin)
+│   ├── factors.php        # Ikäluokkien kertoimet (admin)
 │   └── users.php          # Käyttäjien hallinta (admin)
 └── data/
     └── paivakoti.db       # SQLite-tietokanta (luodaan automaattisesti)
@@ -68,8 +69,8 @@ paivakoti/
 
 ## Suhdeluku
 
-- **Alle 3-vuotiaat**: kerroin 1.75
-- **3-vuotiaat ja vanhemmat**: kerroin 1.0
+- Kertoimet määräytyvät ikäluokittain (admin muokkaa: Kertoimet-sivu). Oletus: **alle 3-vuotiaat** 1.75
+  ja **3-vuotiaat ja vanhemmat** 1.0
 - Tarvittavien aikuisten määrä = `⌈yhteissuhde / 7⌉`
 - Poissaolot nollautuvat automaattisesti uuden kalenteripäivän alkaessa
   (pois lukien "toistaiseksi poissa" -merkinnät)

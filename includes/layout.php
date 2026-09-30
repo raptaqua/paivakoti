@@ -240,6 +240,7 @@ function topbar(array $user, string $active = ''): void {
     <a href="<?= $base ?>/dashboard.php" class="topbar-btn <?= $active==='dashboard'?'active':'' ?>">📊 Ryhmät</a>
     <?php if ($user['role']==='admin'): ?>
     <a href="<?= $base ?>/admin/groups.php" class="topbar-btn <?= $active==='groups'?'active':'' ?>">🗂️ Hallinta</a>
+    <a href="<?= $base ?>/admin/factors.php" class="topbar-btn <?= $active==='factors'?'active':'' ?>">⚖️ Kertoimet</a>
     <a href="<?= $base ?>/admin/users.php" class="topbar-btn <?= $active==='users'?'active':'' ?>">👥 Käyttäjät</a>
     <?php endif; ?>
     <a href="<?= $base ?>/profile.php" class="topbar-btn <?= $active==='profile'?'active':'' ?>">⚙️</a>
@@ -253,6 +254,7 @@ function topbar(array $user, string $active = ''): void {
   <a href="<?= $base ?>/dashboard.php" class="<?= $active==='dashboard'?'active':'' ?>"><span class="ico">📊</span>Ryhmät</a>
   <?php if ($user['role']==='admin'): ?>
   <a href="<?= $base ?>/admin/groups.php" class="<?= $active==='groups'?'active':'' ?>"><span class="ico">🗂️</span>Hallinta</a>
+  <a href="<?= $base ?>/admin/factors.php" class="<?= $active==='factors'?'active':'' ?>"><span class="ico">⚖️</span>Kertoimet</a>
   <a href="<?= $base ?>/admin/users.php" class="<?= $active==='users'?'active':'' ?>"><span class="ico">👥</span>Käyttäjät</a>
   <?php endif; ?>
   <a href="<?= $base ?>/profile.php" class="<?= $active==='profile'?'active':'' ?>"><span class="ico">⚙️</span>Profiili</a>
