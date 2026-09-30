@@ -8,7 +8,7 @@ function htmlHead(string $title = 'Päiväkoti'): void { ?>
 <html lang="fi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title><?= htmlspecialchars($title) ?> — Päiväkoti</title>
 <?php
     $docRoot = rtrim(str_replace('\\','/',realpath($_SERVER['DOCUMENT_ROOT'])), '/');
@@ -29,6 +29,32 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('<?= $pwaBase ?>/sw.js', {scope: '<?= $pwaBase ?>/'}).catch(function () {});
   });
 }
+
+(function () {
+  var deferred = null;
+  var standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+  var isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  function buttons() { return document.querySelectorAll('[data-install]'); }
+  function show(on) { buttons().forEach(function (b) { b.hidden = !on; }); }
+  window.addEventListener('beforeinstallprompt', function (e) {
+    e.preventDefault(); deferred = e; show(true);
+  });
+  window.addEventListener('appinstalled', function () { deferred = null; show(false); });
+  document.addEventListener('DOMContentLoaded', function () {
+    if (standalone) { show(false); return; }
+    if (isIOS) show(true);   // iOS has no install prompt API: show instructions instead
+    buttons().forEach(function (b) {
+      b.addEventListener('click', function () {
+        if (deferred) {
+          deferred.prompt();
+          deferred.userChoice.then(function () { deferred = null; show(false); });
+        } else {
+          alert('Asenna sovellus: paina Safarissa Jaa-painiketta (neliö ja nuoli) ja valitse "Lisää Koti-valikkoon".');
+        }
+      });
+    });
+  });
+})();
 </script>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -165,14 +191,38 @@ tr:hover td{background:#f9fdf9}
 .user-name{font-weight:700;font-size:14px}
 .user-sub{font-size:11px;color:var(--text-soft);margin-top:1px}
 
+/* INSTALL BUTTON */
+.install-btn{background:var(--sun-light);color:var(--forest-dark);border:none;padding:8px 13px;border-radius:8px;font-family:'Quicksand',sans-serif;font-size:13px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:5px;min-height:38px}
+.install-btn[hidden]{display:none}
+.install-btn.block{width:100%;justify-content:center;margin-top:14px;padding:12px;font-size:14px;background:var(--mist);border:2px solid var(--leaf-dark)}
+
+/* BOTTOM NAV (mobile only) */
+.topbar-nav{display:contents}
+.bottom-nav{display:none}
+@media(max-width:700px){
+  .topbar{padding:0 14px;padding-top:env(safe-area-inset-top);height:calc(58px + env(safe-area-inset-top))}
+  .topbar-nav,.topbar-user{display:none}
+  .install-btn:not(.block) .inst-txt{display:none}
+  .topbar-btn,.install-btn{min-height:42px;min-width:42px;justify-content:center;font-size:15px}
+  body.has-nav{padding-bottom:calc(72px + env(safe-area-inset-bottom))}
+  .bottom-nav{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:200;background:white;border-top:1px solid #dfece6;box-shadow:0 -4px 18px var(--shadow);padding-bottom:env(safe-area-inset-bottom)}
+  .bottom-nav a{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:64px;text-decoration:none;color:var(--text-soft);font-size:11px;font-weight:700;-webkit-tap-highlight-color:transparent}
+  .bottom-nav a .ico{font-size:22px;line-height:1}
+  .bottom-nav a.active{color:var(--forest);background:var(--mist)}
+  .page{padding:16px 12px}
+  .btn{min-height:42px}
+  .card{padding:18px}
+}
 @media(max-width:480px){
   .topbar-logo span.logo-text{display:none}
   .summary-number{font-size:24px}
   .form-row{flex-direction:column}
-  .topbar-actions{gap:3px}
-  .topbar-btn{padding:7px 9px;font-size:12px}
 }
 </style>
+<?php }
+
+function installButton(bool $block = false): void { ?>
+<button type="button" class="install-btn<?= $block ? ' block' : '' ?>" data-install hidden aria-label="Asenna sovellus">📲<span class="inst-txt"> Asenna sovellus</span></button>
 <?php }
 
 function topbar(array $user, string $active = ''): void {
@@ -186,15 +236,27 @@ function topbar(array $user, string $active = ''): void {
   <a href="<?= $base ?>/dashboard.php" class="topbar-logo">🌳 <span class="logo-text">Päiväkoti</span></a>
   <div class="topbar-actions">
     <span class="topbar-user">👤 <?= htmlspecialchars($user['full_name']) ?></span>
+    <span class="topbar-nav">
     <a href="<?= $base ?>/dashboard.php" class="topbar-btn <?= $active==='dashboard'?'active':'' ?>">📊 Ryhmät</a>
     <?php if ($user['role']==='admin'): ?>
     <a href="<?= $base ?>/admin/groups.php" class="topbar-btn <?= $active==='groups'?'active':'' ?>">🗂️ Hallinta</a>
     <a href="<?= $base ?>/admin/users.php" class="topbar-btn <?= $active==='users'?'active':'' ?>">👥 Käyttäjät</a>
     <?php endif; ?>
     <a href="<?= $base ?>/profile.php" class="topbar-btn <?= $active==='profile'?'active':'' ?>">⚙️</a>
-    <a href="<?= $base ?>/logout.php" class="topbar-btn">🚪</a>
+    </span>
+    <?php installButton(); ?>
+    <a href="<?= $base ?>/logout.php" class="topbar-btn" aria-label="Kirjaudu ulos">🚪</a>
   </div>
 </div>
+<nav class="bottom-nav" aria-label="Päävalikko">
+  <a href="<?= $base ?>/dashboard.php" class="<?= $active==='dashboard'?'active':'' ?>"><span class="ico">📊</span>Ryhmät</a>
+  <?php if ($user['role']==='admin'): ?>
+  <a href="<?= $base ?>/admin/groups.php" class="<?= $active==='groups'?'active':'' ?>"><span class="ico">🗂️</span>Hallinta</a>
+  <a href="<?= $base ?>/admin/users.php" class="<?= $active==='users'?'active':'' ?>"><span class="ico">👥</span>Käyttäjät</a>
+  <?php endif; ?>
+  <a href="<?= $base ?>/profile.php" class="<?= $active==='profile'?'active':'' ?>"><span class="ico">⚙️</span>Profiili</a>
+</nav>
+<script>document.body.classList.add('has-nav');</script>
 <?php }
 
 function htmlFoot(): void { ?>

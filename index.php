@@ -54,6 +54,8 @@ body{display:flex;align-items:center;justify-content:center;min-height:100vh;pad
     <button type="submit" class="btn btn-primary btn-full">Kirjaudu sisään →</button>
   </form>
 
+  <?php installButton(true); ?>
+
   <a href="reset_request.php" class="forgot-link">🔑 Unohditko salasanan?</a>
 </div>
 
