@@ -121,33 +121,23 @@ htmlHead('Ryhmien hallinta');
 
 <?php foreach ($groupsWithChildren as $gd): $g = $gd['group']; ?>
 <div class="card">
-  <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:16px;flex-wrap:wrap">
-    <div style="font-size:28px"><?= htmlspecialchars($g['emoji']) ?></div>
-    <form method="POST" style="flex:1;min-width:200px">
-      <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token) ?>">
-      <input type="hidden" name="action" value="edit_group">
-      <input type="hidden" name="group_id" value="<?= $g['id'] ?>">
-      <div class="form-row" style="margin-bottom:8px">
-        <div class="form-group" style="margin-bottom:0">
-          <input type="text" name="name" value="<?= htmlspecialchars($g['name']) ?>" required style="font-family:'Nunito',sans-serif;font-weight:900;font-size:17px">
-        </div>
-        <div class="form-group" style="margin-bottom:0;max-width:110px">
-          <select name="emoji">
-            <?php foreach ($emojis as $e): ?>
-            <option value="<?= $e ?>" <?= $e===$g['emoji']?'selected':'' ?>><?= $e ?></option>
-            <?php endforeach; ?>
-          </select>
-        </div>
-        <button type="submit" class="btn btn-secondary btn-sm" style="align-self:flex-end">💾 Tallenna</button>
-      </div>
-    </form>
-    <form method="POST" onsubmit="return confirm('Poistetaanko ryhmä? Varmista että ryhmässä ei ole lapsia.')">
-      <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token) ?>">
-      <input type="hidden" name="action" value="delete_group">
-      <input type="hidden" name="group_id" value="<?= $g['id'] ?>">
-      <button type="submit" class="btn btn-danger btn-sm">🗑️ Poista ryhmä</button>
-    </form>
-  </div>
+  <form method="POST" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:16px">
+    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token) ?>">
+    <input type="hidden" name="group_id" value="<?= $g['id'] ?>">
+    <select name="emoji" aria-label="Emoji" style="width:auto;padding:8px 10px;font-size:22px;border:2px solid #e0ece7;border-radius:var(--radius-sm);background:var(--mist)">
+      <?php foreach ($emojis as $e): ?>
+      <option value="<?= $e ?>" <?= $e===$g['emoji']?'selected':'' ?>><?= $e ?></option>
+      <?php endforeach; ?>
+    </select>
+    <input type="text" name="name" value="<?= htmlspecialchars($g['name']) ?>" required maxlength="40" aria-label="Ryhmän nimi"
+           size="<?= max(6, mb_strlen($g['name']) + 2) ?>" oninput="this.size=Math.max(6,this.value.length+2)"
+           style="width:auto;max-width:100%;padding:9px 12px;border:2px solid #e0ece7;border-radius:var(--radius-sm);background:var(--mist);font-family:'Nunito',sans-serif;font-weight:900;font-size:17px;color:var(--text)">
+    <span style="display:flex;gap:8px;margin-left:auto">
+      <button type="submit" name="action" value="edit_group" class="btn btn-secondary btn-sm">💾 Tallenna</button>
+      <button type="submit" name="action" value="delete_group" class="btn btn-danger btn-sm" formnovalidate
+              onclick="return confirm('Poistetaanko ryhmä? Varmista että ryhmässä ei ole lapsia.')">🗑️ Poista ryhmä</button>
+    </span>
+  </form>
 
   <hr style="border:none;border-top:1px solid #eee;margin-bottom:14px">
 
