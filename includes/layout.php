@@ -10,6 +10,26 @@ function htmlHead(string $title = 'Päiväkoti'): void { ?>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title><?= htmlspecialchars($title) ?> — Päiväkoti</title>
+<?php
+    $docRoot = rtrim(str_replace('\\','/',realpath($_SERVER['DOCUMENT_ROOT'])), '/');
+    $appRoot = rtrim(str_replace('\\','/',realpath(__DIR__ . '/../')), '/');
+    $pwaBase = str_replace($docRoot, '', $appRoot);
+?>
+<link rel="manifest" href="<?= $pwaBase ?>/manifest.webmanifest">
+<meta name="theme-color" content="#2d6a4f">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Päiväkoti">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="apple-touch-icon" href="<?= $pwaBase ?>/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="<?= $pwaBase ?>/icons/icon-192.png">
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('<?= $pwaBase ?>/sw.js', {scope: '<?= $pwaBase ?>/'}).catch(function () {});
+  });
+}
+</script>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
